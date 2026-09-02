@@ -3,11 +3,10 @@ main = "src/index.ts"
 compatibility_date = "2025-01-01"
 
 [vars]
-# Comma-separated list of allowed origins. Each Pages deploy gets a unique URL,
-# so list both the current production URL and any preview/custom domains.
-# In dev (localhost:5173), CORS still works because resolveOrigin falls back
-# to echoing the request Origin if it matches the wildcard pattern.
-ALLOWED_ORIGIN = "https://7d0f1d4f.alarm-clock-94u.pages.dev,https://93a6fb3f.alarm-clock-94u.pages.dev,http://localhost:5173"
+# The API has no auth, no cookies, no sensitive data — it's safe to allow all
+# origins. Cloudflare Pages assigns a fresh hash URL to every deploy, so
+# hardcoding any single URL breaks on the next deploy.
+ALLOWED_ORIGIN = "*"
 
 # Optional — set in Cloudflare dashboard for production:
 # NEWSAPI_KEY = "your_key_here"

@@ -1,7 +1,7 @@
 // Service Worker — minimal. Cache static assets for offline shell.
-// API responses are NOT cached; alarms should reflect live weather/headlines.
+// API responses are NEVER cached; alarms should always reflect live weather/headlines.
 
-const CACHE_NAME = 'briefing-v1';
+const CACHE_NAME = 'briefing-v2';
 const SHELL = ['/', '/index.html', '/alarm.wav', '/icons/icon.svg', '/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
@@ -12,6 +12,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
+      // Delete ALL old caches — bumps force fresh shell after deploys.
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );

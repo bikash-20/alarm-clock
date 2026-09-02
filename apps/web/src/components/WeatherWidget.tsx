@@ -21,6 +21,7 @@ export const WeatherWidget = () => {
       try {
         const res = await fetch(
           `/api/weather?lat=${lat}&lon=${lon}`,
+          { cache: 'no-store' },
         );
         if (!res.ok) throw new Error(`weather ${res.status}`);
         const data = (await res.json()) as Weather;
@@ -28,7 +29,8 @@ export const WeatherWidget = () => {
           setWeather({ ...data, city });
           setLoading(false);
         }
-      } catch {
+      } catch (err) {
+        console.warn('[WeatherWidget] fetch failed:', err);
         if (!cancelled) setLoading(false);
       }
     };
