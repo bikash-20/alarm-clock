@@ -1,4 +1,7 @@
 # Briefing — Executive Alarm Clock
+live link: https://a89f47bc.alarm-clock-94u.pages.dev/
+<img width="1099" height="742" alt="image" src="https://github.com/user-attachments/assets/a5e6d0d3-83bd-4f41-8924-69a4b2282830" />
+
 
 > **Wake up informed.** When your alarm fires, the app reads you the weather and today's top tech headlines aloud — using your browser's built-in voice.
 
