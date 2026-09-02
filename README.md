@@ -6,7 +6,7 @@ A full-stack PWA that runs entirely on Cloudflare's free tier. No servers to man
 
 ---
 
-## 📋 Program Context
+## Program Context
 
 This project was built as **Task 5 of the Arithmatrix Virtual Internship Program (AVIP) 2026**, delivered by **B.Y.T.E — Build Your Tech Expertise**, the official R&D and educational wing of the Arithmatrix ecosystem.
 
@@ -22,45 +22,45 @@ The brief: take a PRD for a React + Vite + FastAPI alarm app and ship it — fro
 
 ---
 
-## ✨ Features
+## Features
 
-- ⏰ **Unlimited alarms** — recurring (daily, weekdays, weekends, custom days) or one-time
-- 🌤️ **Live weather** for your city (Open-Meteo, no API key needed)
-- 📰 **Top 3 tech headlines** at alarm time (NewsAPI, with offline fallback)
-- 🔊 **Voice briefing** — browser TTS reads the weather + headlines aloud
-- 🛌 **Snooze 5 min** / **Dismiss** buttons
-- 📱 **Installable PWA** — works on iOS, Android, desktop, tablet
-- 🌗 **Dark & light themes** with a hand-tuned Dark Academia / Coastal Earth palette
-- 🌐 **Offline-capable** — alarm sound, shell, and previously-cached briefings all work without network
-- 💾 **localStorage persistence** — alarms survive refreshes and restarts
-- 🔔 **Browser notifications** when alarms fire (with permission)
-- 🇧🇩 **South Asian city presets** — Dhaka, Delhi, Mumbai, Bangalore, Kolkata, Chennai, Karachi, Colombo, Kathmandu
+- **Unlimited alarms** — recurring (daily, weekdays, weekends, custom days) or one-time
+- **Live weather** for your city (Open-Meteo, no API key needed)
+- **Top 3 tech headlines** at alarm time (NewsAPI, with offline fallback)
+- **Voice briefing** — browser TTS reads the weather + headlines aloud
+- **Snooze 5 min** / **Dismiss** buttons
+- **Installable PWA** — works on iOS, Android, desktop, tablet
+- **Dark & light themes** with a hand-tuned Dark Academia / Coastal Earth palette
+- **Offline-capable** — alarm sound, shell, and previously-cached briefings all work without network
+- **localStorage persistence** — alarms survive refreshes and restarts
+- **Browser notifications** when alarms fire (with permission)
+- **South Asian city presets** — Dhaka, Delhi, Mumbai, Bangalore, Kolkata, Chennai, Karachi, Colombo, Kathmandu
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                       Cloudflare Edge                         │
-│  ┌────────────────────────┐   ┌──────────────────────────┐   │
-│  │  Pages (Frontend)      │   │  Workers (Backend API)   │   │
-│  │  React + Vite SPA      │   │  Hono on Workers         │   │
-│  │  • PWA / Service Worker│   │  • /api/weather          │   │
-│  │  • Static assets + CDN │   │  • /api/headlines        │   │
-│  │  • HTTPS by default    │   │  • /api/health           │   │
-│  └────────────────────────┘   └──────────────────────────┘   │
-└──────────────────────────────────────────────────────────────┘
-              │                              │
-              │  HTTPS                       │  HTTPS
-              │  /api/* → Worker             │  Upstream fetches
-              ▼                              ▼
-       ┌──────────────┐              ┌────────────────┐
-       │   Browser    │              │  Open-Meteo    │
-       │  • Web Speech│              │  NewsAPI       │
-       │  • localStorage              └────────────────┘
-       │  • Notifications
-       └──────────────┘
++--------------------------------------------------------------+
+|                       Cloudflare Edge                         |
+|  +------------------------+   +--------------------------+   |
+|  |  Pages (Frontend)      |   |  Workers (Backend API)   |   |
+|  |  React + Vite SPA      |   |  Hono on Workers         |   |
+|  |  - PWA / Service Worker|   |  - /api/weather          |   |
+|  |  - Static assets + CDN |   |  - /api/headlines        |   |
+|  |  - HTTPS by default    |   |  - /api/health           |   |
+|  +------------------------+   +--------------------------+   |
++--------------------------------------------------------------+
+              |                              |
+              |  HTTPS                       |  HTTPS
+              |  /api/* -> Worker            |  Upstream fetches
+              v                              v
+       +--------------+              +----------------+
+       |   Browser    |              |  Open-Meteo    |
+       |  - Web Speech|              |  NewsAPI       |
+       |  - localStorage             +----------------+
+       |  - Notifications
+       +--------------+
 ```
 
 **One platform, one URL, zero cold starts.** Single deploy, global edge.
@@ -68,7 +68,7 @@ The brief: take a PRD for a React + Vite + FastAPI alarm app and ship it — fro
 ### Why Cloudflare Workers instead of the PRD's Python FastAPI?
 
 - Workers runs JavaScript/TypeScript natively; Python on Workers is still experimental
-- Sub-millisecond cold starts (Render free tier = 30–50s cold start)
+- Sub-millisecond cold starts (Render free tier = 30-50s cold start)
 - 100k requests/day free
 - The weather/headlines proxy is the perfect shape for Workers — fetch external APIs, return JSON
 
@@ -84,7 +84,7 @@ The brief: take a PRD for a React + Vite + FastAPI alarm app and ship it — fro
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **React 18** — UI framework, components
@@ -112,7 +112,7 @@ The brief: take a PRD for a React + Vite + FastAPI alarm app and ship it — fro
 
 ---
 
-## 📁 Monorepo Structure
+## Monorepo Structure
 
 ```
 alarm-clock/
@@ -147,7 +147,8 @@ alarm-clock/
 │       │   │   ├── AlarmModal.tsx
 │       │   │   ├── BriefingOverlay.tsx
 │       │   │   ├── SettingsPanel.tsx
-│       │   │   └── InstallPrompt.tsx
+│       │   │   ├── InstallPrompt.tsx
+│       │   │   └── WeatherWidget.tsx
 │       │   ├── hooks/
 │       │   │   ├── useAlarmChecker.ts  # 1s interval trigger loop
 │       │   │   ├── useTTS.ts           # Web Speech wrapper
@@ -173,7 +174,7 @@ alarm-clock/
 
 ---
 
-## 🚀 Local Development
+## Local Development
 
 Requires **Node 20+**. From the project root:
 
@@ -196,7 +197,7 @@ Get a free key at https://newsapi.org (100 requests/day).
 
 ---
 
-## ☁️ Deploy to Cloudflare
+## Deploy to Cloudflare
 
 Free tier. No credit card. ~10 minutes total.
 
@@ -226,19 +227,7 @@ First deploy creates the Pages project automatically. Note the URL — e.g. `htt
 
 ### Wire them together
 
-Edit `apps/api/wrangler.toml` and set your real Pages URL:
-
-```toml
-[vars]
-ALLOWED_ORIGIN = "https://YOUR-PROJECT.pages.dev"
-```
-
-Then redeploy the API:
-
-```bash
-cd ../../apps/api
-npx wrangler deploy
-```
+Edit `apps/api/wrangler.toml`. The default `ALLOWED_ORIGIN = "*"` works for public deployments since the API has no auth/cookies. For stricter security, list your exact Pages URLs comma-separated.
 
 ### Optional: add NewsAPI key (Cloudflare dashboard)
 
@@ -248,22 +237,22 @@ npx wrangler deploy
 
 ---
 
-## 🧪 Testing the Briefing Pipeline
+## Testing the Briefing Pipeline
 
 1. Open your deployed app
-2. ⚙️ Settings → **Location** → pick a city (Dhaka, Delhi, etc.)
-3. Click **+ Add alarm**, set it for **1 minute from now**, click Create
+2. Open Settings → **Location** → pick a city (Dhaka, Delhi, etc.)
+3. Click **Add alarm**, set it for **1 minute from now**, click Create
 4. When the alarm fires:
    - Audible alert tone plays
    - Full-screen briefing overlay slides in with weather + 3 headlines
    - Browser TTS speaks the briefing aloud
    - Snooze 5m / Dismiss buttons work
 5. Refresh the page → alarm is still scheduled (localStorage)
-6. Toggle the theme icon → dark ↔ light with smooth CSS variable transition
+6. Toggle the theme icon → dark / light with smooth CSS variable transition
 
 ---
 
-## 🎨 Design System
+## Design System
 
 ### Palette — *"Dark Academia / Desert Dusk"*
 
@@ -280,8 +269,8 @@ npx wrangler deploy
 
 - **Body:** Inter — clean, optimized for screens
 - **Display:** Fraunces (italic serif) — used for titles, eyebrows, and numeric counters
-- Letter-spacing: −0.015em on display text for tight, editorial feel
-- Uppercase eyebrows with 0.12–0.18em tracking — book-chapter kicker style
+- Letter-spacing: -0.015em on display text for tight, editorial feel
+- Uppercase eyebrows with 0.12-0.18em tracking — book-chapter kicker style
 
 ### Refinements
 
@@ -294,7 +283,7 @@ npx wrangler deploy
 
 ---
 
-## 📱 PWA Coverage
+## PWA Coverage
 
 The install prompt and icons cover every major platform:
 
@@ -303,7 +292,7 @@ The install prompt and icons cover every major platform:
 | **Chrome / Edge (Android + Desktop)** | Native `beforeinstallprompt` → one-tap install |
 | **iOS Safari** | Custom hint to use Share → Add to Home Screen |
 | **Android adaptive icons** | `icon-maskable-512.png` with safe-zone content |
-| **iOS Home Screen** | `apple-touch-icon.png` (180×180) + `apple-mobile-web-app-capable` |
+| **iOS Home Screen** | `apple-touch-icon.png` (180x180) + `apple-mobile-web-app-capable` |
 | **Windows tile** | `msapplication-TileImage` + `msapplication-TileColor` |
 | **High-DPI favicons** | 16, 32, 48px variants |
 
@@ -311,7 +300,7 @@ The install prompt and icons cover every major platform:
 
 ---
 
-## 🧠 Engineering Decisions
+## Engineering Decisions
 
 ### State management: Zustand, not Context
 
@@ -343,20 +332,20 @@ Three routes, one file, one `wrangler.toml`. No ORM, no validation library, no a
 
 ---
 
-## 📦 Performance Budget
+## Performance Budget
 
 | Bundle | Raw | Gzipped |
 |---|---|---|
 | Frontend JS | 292 kB | 95 kB |
-| Frontend CSS | 14.6 kB | 3.6 kB |
-| Worker | 65.6 kB | 16.6 kB |
-| First paint target | < 2s | ✓ |
-| Time to interactive target | < 3s | ✓ |
-| Alarm drift target | < 1s | ✓ (1s interval, gates on `seconds === 0`) |
+| Frontend CSS | 15.4 kB | 3.8 kB |
+| Worker | 66 kB | 17 kB |
+| First paint target | < 2s | Yes |
+| Time to interactive target | < 3s | Yes |
+| Alarm drift target | < 1s | Yes (1s interval, gates on `seconds === 0`) |
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 This is an internship deliverable, not a maintained project. If you're another AVIP 2026 intern and want to fork it for your own task:
 
@@ -366,13 +355,13 @@ This is an internship deliverable, not a maintained project. If you're another A
 
 ---
 
-## 📜 License
+## License
 
 MIT — do whatever you want with it.
 
 ---
 
-## 👤 Author
+## Author
 
 **bikash-20** — AVIP 2026 intern, Arithmatrix B.Y.T.E program.
 
