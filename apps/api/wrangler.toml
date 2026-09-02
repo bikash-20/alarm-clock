@@ -1,0 +1,9 @@
+name = "alarm-clock-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://7d0f1d4f.alarm-clock-94u.pages.dev"
+
+# Set in Cloudflare dashboard for production:
+# NEWSAPI_KEY = "your_key_here"

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Maskable icon: full bleed background + safe zone content (clock face within central 80%) -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1e25"/>
+      <stop offset="1" stop-color="#1d333d"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c89a76"/>
+      <stop offset="1" stop-color="#946b4d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Full-bleed background (safe for any mask) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Safe zone: content stays within central 80% (102-410) -->
+  <!-- Clock face -->
+  <circle cx="256" cy="280" r="130" fill="#162a32"/>
+  <circle cx="256" cy="280" r="130" fill="none" stroke="url(#ring)" stroke-width="3"/>
+
+  <!-- Hour ticks -->
+  <line x1="256" y1="166" x2="256" y2="180" stroke="#b58863" stroke-width="3" stroke-linecap="round"/>
+  <line x1="370" y1="280" x2="356" y2="280" stroke="#b58863" stroke-width="3" stroke-linecap="round"/>
+  <line x1="256" y1="394" x2="256" y2="380" stroke="#b58863" stroke-width="3" stroke-linecap="round"/>
+  <line x1="142" y1="280" x2="156" y2="280" stroke="#b58863" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <line x1="256" y1="280" x2="206" y2="234" stroke="#d3c3b9" stroke-width="9" stroke-linecap="round"/>
+  <line x1="256" y1="280" x2="316" y2="234" stroke="#d3c3b9" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Center -->
+  <circle cx="256" cy="280" r="7" fill="#b58863"/>
+
+  <!-- Bells above safe zone (some masks will keep them) -->
+  <path d="M 196 130 Q 196 116 210 116 L 230 116 Q 244 116 244 130 L 244 148 L 196 148 Z" fill="url(#ring)"/>
+  <path d="M 268 130 Q 268 116 282 116 L 302 116 Q 316 116 316 130 L 316 148 L 268 148 Z" fill="url(#ring)"/>
+  <circle cx="220" cy="156" r="8" fill="url(#ring)"/>
+  <circle cx="292" cy="156" r="8" fill="url(#ring)"/>
+</svg>
