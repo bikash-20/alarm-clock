@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 
 type Bindings = {
   NEWSAPI_KEY?: string;
-  ALLOWED_ORIGIN?: string;
+  ALLOWED_ORIGIN?: string;       // Comma-separated list, e.g. "https://x.pages.dev,https://y.pages.dev"
 };
 
 // Open-Meteo WMO weather code → human condition.
@@ -21,35 +21,49 @@ const FALLBACK_HEADLINES = [
   'New Open-Source Framework Gains 10k GitHub Stars in 24 Hours',
 ];
 
-const cors = (origin: string) => ({
-  'Access-Control-Allow-Origin': origin,
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Max-Date': '86400',
-});
+// Resolve the allowed origin for an incoming request.
+// Supports: wildcard "*", single URL, comma-separated list of URLs.
+// Falls back to echoing the request origin if it's in the whitelist.
+const resolveOrigin = (allowed: string | undefined, requestOrigin: string | null): string => {
+  if (!allowed || allowed === '*') return '*';
+  const list = allowed.split(',').map((s) => s.trim()).filter(Boolean);
+  if (list.includes('*')) return '*';
+  if (requestOrigin && list.includes(requestOrigin)) return requestOrigin;
+  return list[0] ?? '*';
+};
+
+const corsHeaders = (allowed: string | undefined, requestOrigin: string | null) => {
+  const origin = resolveOrigin(allowed, requestOrigin);
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
+  };
+};
 
 const app = new Hono<{ Bindings: Bindings }>().basePath('/api');
 
 app.options('*', (c) => {
-  const origin = c.env.ALLOWED_ORIGIN ?? '*';
-  return c.body(null, 204, cors(origin));
+  return c.body(null, 204, corsHeaders(c.env.ALLOWED_ORIGIN, c.req.header('origin') ?? null));
 });
 
 app.get('/health', (c) => {
-  const origin = c.env.ALLOWED_ORIGIN ?? '*';
   return c.json(
     { status: 'ok', timestamp: new Date().toISOString() },
-    200, cors(origin),
+    200,
+    corsHeaders(c.env.ALLOWED_ORIGIN, c.req.header('origin') ?? null),
   );
 });
 
 app.get('/weather', async (c) => {
-  const origin = c.env.ALLOWED_ORIGIN ?? '*';
+  const headers = corsHeaders(c.env.ALLOWED_ORIGIN, c.req.header('origin') ?? null);
   const lat = Number(c.req.query('lat') ?? '37.7749');
   const lon = Number(c.req.query('lon') ?? '-122.4194');
 
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-    return c.json({ detail: 'Invalid lat/lon' }, 400, cors(origin));
+    return c.json({ detail: 'Invalid lat/lon' }, 400, headers);
   }
 
   try {
@@ -77,19 +91,19 @@ app.get('/weather', async (c) => {
         windSpeed: data.current.wind_speed_10m,
       },
       200,
-      cors(origin),
+      headers,
     );
   } catch (err) {
     return c.json(
       { detail: `Weather service unavailable: ${(err as Error).message}` },
       502,
-      cors(origin),
+      headers,
     );
   }
 });
 
 app.get('/headlines', async (c) => {
-  const origin = c.env.ALLOWED_ORIGIN ?? '*';
+  const headers = corsHeaders(c.env.ALLOWED_ORIGIN, c.req.header('origin') ?? null);
   const key = c.env.NEWSAPI_KEY;
 
   if (!key) {
@@ -100,7 +114,7 @@ app.get('/headlines', async (c) => {
         fetchedAt: new Date().toISOString(),
       },
       200,
-      cors(origin),
+      headers,
     );
   }
 
@@ -130,7 +144,7 @@ app.get('/headlines', async (c) => {
     return c.json(
       { headlines, source: 'newsapi', fetchedAt: new Date().toISOString() },
       200,
-      cors(origin),
+      headers,
     );
   } catch (err) {
     return c.json(
@@ -141,7 +155,7 @@ app.get('/headlines', async (c) => {
         error: (err as Error).message,
       },
       200,
-      cors(origin),
+      headers,
     );
   }
 });
