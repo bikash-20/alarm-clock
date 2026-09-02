@@ -1,5 +1,6 @@
 import { useStore } from '../store';
 import { AlarmCard } from './AlarmCard';
+import { WeatherWidget } from './WeatherWidget';
 import { useState } from 'react';
 import type { Alarm } from '../lib/types';
 import { AlarmModal } from './AlarmModal';
@@ -13,6 +14,7 @@ export const Dashboard = () => {
 
   return (
     <main className="dashboard">
+      <WeatherWidget />
       <div className="dashboard__head">
         <div>
           <h2 className="dashboard__title">Your alarms</h2>
